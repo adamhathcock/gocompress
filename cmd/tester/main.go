@@ -8,8 +8,8 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/adamhathcock/gocompress/pkg/generic"
 	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/pkg/generic"
 )
 
 func mkdir(dirPath string) error {

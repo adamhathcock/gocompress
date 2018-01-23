@@ -22,7 +22,7 @@ func (entry zipFormatEntry) Name() string {
 
 func (entry zipFormatEntry) IsDirectory() bool {
 	// just the suffix of '/' should be enough
-	return (entry.zipEntry.CompressedSize64 == 0 && entry.zipEntry.UncompressedSize64 == 0 && strings.HasSuffix(entry.Name(), "/"))
+	return entry.zipEntry.CompressedSize64 == 0 && entry.zipEntry.UncompressedSize64 == 0 && strings.HasSuffix(entry.Name(), "/")
 }
 
 func (entry zipFormatEntry) Mode() os.FileMode {
