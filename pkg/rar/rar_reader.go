@@ -62,9 +62,9 @@ func (rfr *rarFormatReader) Open(input io.Reader) error {
 func (rfr *rarFormatReader) ReadEntry() (gocompress.Entry, error) {
 	header, err := rfr.rarReader.Next()
 	if err == io.EOF {
-		return gocompress.NilEntry, nil
+		return nil, nil
 	} else if err != nil {
-		return gocompress.NilEntry, err
+		return nil, err
 	}
 
 	return &rarFormatEntry{

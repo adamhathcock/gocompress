@@ -71,7 +71,7 @@ func main() {
 			os.Exit(-1)
 			return
 		}
-		if entry == gocompress.NilEntry {
+		if entry == nil {
 			break
 		}
 		if strings.Contains(entry.Name(), "131") {
@@ -146,7 +146,7 @@ func main() {
 			os.Exit(-1)
 			return
 		}
-		if entry == gocompress.NilEntry {
+		if entry == nil {
 			break
 		}
 		/*path := filepath.Join(tmp, entry.Name())

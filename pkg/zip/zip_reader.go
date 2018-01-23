@@ -51,7 +51,7 @@ func (rfr *zipFormatReader) OpenPath(path string) error {
 // into destination.
 func (rfr *zipFormatReader) ReadEntry() (gocompress.Entry, error) {
 	if rfr.index >= len(rfr.zipReader.File) {
-		return gocompress.NilEntry, nil
+		return nil, nil
 	}
 
 	f := rfr.zipReader.File[rfr.index]
