@@ -71,3 +71,7 @@ func (rfr *rarFormatReader) ReadEntry() (gocompress.Entry, error) {
 		rfr.rarReader,
 		header}, nil
 }
+
+func (rfr *rarFormatReader) ArchiveType() gocompress.ArchiveType {
+	return gocompress.RarArchive
+}

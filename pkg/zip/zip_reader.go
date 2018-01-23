@@ -59,3 +59,7 @@ func (rfr *zipFormatReader) ReadEntry() (gocompress.Entry, error) {
 	rfr.index++
 	return &zipFormatEntry{f}, nil
 }
+
+func (rfr *zipFormatReader) ArchiveType() gocompress.ArchiveType {
+	return gocompress.ZipArchive
+}
