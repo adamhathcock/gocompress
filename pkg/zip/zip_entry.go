@@ -1,4 +1,4 @@
-package gocompress
+package zip
 
 import (
 	"archive/zip"

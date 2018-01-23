@@ -2,6 +2,8 @@
 
 This is intended to be a library that has similar features to the C# version: [SharpCompress](https://github.com/adamhathcock/sharpcompress)
 
+Inspired by https://github.com/mholt/archiver
+
 ## In Progress
 
 - Reader API

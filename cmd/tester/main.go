@@ -8,8 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/adamhathcock/gocompress/pkg/rar"
-	zip "github.com/adamhathcock/gocompress/pkg/zip"
+	"github.com/adamhathcock/gocompress/pkg/generic"
 	"github.com/adamhathcock/gocompress"
 )
 
@@ -56,10 +55,9 @@ func main() {
 	}
 	//defer os.RemoveAll(tmp)
 
-	ar := rar.RarReader
-
 	fmt.Print(tmp)
-	err = ar.OpenPath("/Users/adam/Desktop/Comics/All-Star Batman v1 (2016)/All-Star Batman Vol. 02 - Ends of the Earth (2017) (Digital) (Zone-Empire).cbr")
+	var reader gocompress.Reader
+	reader, err = generic.OpenFilePath("/Users/adam/Desktop/Comics/All-Star Batman v1 (2016)/All-Star Batman Vol. 02 - Ends of the Earth (2017) (Digital) (Zone-Empire).cbr")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
@@ -67,7 +65,7 @@ func main() {
 	}
 	var entry gocompress.Entry
 	for {
-		entry, err = ar.ReadEntry()
+		entry, err = reader.ReadEntry()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
@@ -133,17 +131,16 @@ func main() {
 	}
 	//defer os.RemoveAll(tmp)*/
 
-	zipReader := zip.ZipReader
 
 	fmt.Print(tmp)
-	err = zipReader.OpenPath("/Users/adam/Downloads/Duet-1-7-0-2.zip")
+	reader, err = generic.OpenFilePath("/Users/adam/Downloads/Duet-1-7-0-2.zip")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 		return
 	}
 	for {
-		entry, err = zipReader.ReadEntry()
+		entry, err = reader.ReadEntry()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(-1)
