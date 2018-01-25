@@ -7,9 +7,15 @@
   packages = ["."]
   revision = "e06696f847aeda6f39a8f0b7cdff193b7690aef6"
 
+[[projects]]
+  name = "github.com/ulikunitz/xz"
+  packages = [".","internal/hash","internal/xlog","lzma"]
+  revision = "0c6b41e72360850ca4f98dc341fd999726ea007f"
+  version = "v0.5.4"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0b40dde5a79fefe8afc48ac625dea217849d129d9e7a69ad217898986f132829"
+  inputs-digest = "ea24825bfacb6041be622448a8f70e2f11137d28fa8947f795b81abefd02ecac"
   solver-name = "gps-cdcl"
   solver-version = 1
