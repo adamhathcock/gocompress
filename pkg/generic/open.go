@@ -2,10 +2,8 @@ package generic
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/adamhathcock/gocompress"
 	"github.com/adamhathcock/gocompress/pkg/rar"
@@ -51,7 +49,7 @@ func Extract(source string, destination string) error {
 			break
 		}
 		path := filepath.Join(destination, entry.Name())
-		writeNewFile(path, 666)
+		gocompress.WriteNewFile(path, 666)
 		writer, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if err != nil {
 			return err
@@ -61,25 +59,5 @@ func Extract(source string, destination string) error {
 			return err
 		}
 	}
-	return nil
-}
-
-func writeNewFile(fpath string, fm os.FileMode) error {
-	err := os.MkdirAll(filepath.Dir(fpath), 0755)
-	if err != nil {
-		return fmt.Errorf("%s: making directory for file: %v", fpath, err)
-	}
-
-	out, err := os.Create(fpath)
-	if err != nil {
-		return fmt.Errorf("%s: creating new file: %v", fpath, err)
-	}
-	defer out.Close()
-
-	err = out.Chmod(fm)
-	if err != nil && runtime.GOOS != "windows" {
-		return fmt.Errorf("%s: changing file mode: %v", fpath, err)
-	}
-
 	return nil
 }
