@@ -1,6 +1,7 @@
 package gocompress
 
 import (
+	"io"
 	"os"
 	"path/filepath"
 	"testing"
@@ -28,9 +29,9 @@ func ExtractionTest(t *testing.T, reader Reader, archive string) {
 	require.Nil(err, "Could not open archive\n\t %v", err)
 
 	for {
-		entry, err := reader.ReadEntry()
+		entry, err := reader.Next()
 		require.Nil(err, "Could not read entry from archive\n\t %v", err)
-		if entry == nil {
+		if err == io.EOF {
 			break
 		}
 		if entry.IsDirectory() {

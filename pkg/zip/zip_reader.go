@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/adamhathcock/gocompress"
@@ -34,13 +35,13 @@ func IsZip(zipPath string) bool {
 	return bytes.Equal(buf, []byte("PK\x03\x04"))
 }
 
-func (rfr *zipFormatReader) Close() error {
-	return rfr.zipReader.Close()
+func (zfr *zipFormatReader) Close() error {
+	return zfr.zipReader.Close()
 }
 
-func (rfr *zipFormatReader) OpenPath(path string) error {
+func (zfr *zipFormatReader) OpenPath(path string) error {
 	var err error
-	rfr.zipReader, err = zip.OpenReader(path)
+	zfr.zipReader, err = zip.OpenReader(path)
 	if err != nil {
 		return fmt.Errorf("read: failed to create reader: %v", err)
 	}
@@ -49,17 +50,17 @@ func (rfr *zipFormatReader) OpenPath(path string) error {
 
 // Read extracts the RAR file read from input and puts the contents
 // into destination.
-func (rfr *zipFormatReader) ReadEntry() (gocompress.Entry, error) {
-	if rfr.index >= len(rfr.zipReader.File) {
-		return nil, nil
+func (zfr *zipFormatReader) Next() (gocompress.Entry, error) {
+	if zfr.index >= len(zfr.zipReader.File) {
+		return nil, io.EOF
 	}
 
-	f := rfr.zipReader.File[rfr.index]
+	f := zfr.zipReader.File[zfr.index]
 
-	rfr.index++
+	zfr.index++
 	return &zipFormatEntry{f}, nil
 }
 
-func (rfr *zipFormatReader) ArchiveType() gocompress.ArchiveType {
+func (zfr *zipFormatReader) ArchiveType() gocompress.ArchiveType {
 	return gocompress.ZipArchive
 }

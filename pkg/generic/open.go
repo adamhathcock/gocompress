@@ -2,6 +2,7 @@ package generic
 
 import (
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -41,12 +42,12 @@ func Extract(source string, destination string) error {
 	}
 	var entry gocompress.Entry
 	for {
-		entry, err = reader.ReadEntry()
+		entry, err = reader.Next()
+		if err == io.EOF {
+			break
+		}
 		if err != nil {
 			return err
-		}
-		if entry == nil {
-			break
 		}
 		path := filepath.Join(destination, entry.Name())
 		gocompress.WriteNewFile(path, 666)

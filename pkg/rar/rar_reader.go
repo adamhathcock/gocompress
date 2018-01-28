@@ -59,10 +59,10 @@ func (rfr *rarFormatReader) Open(input io.Reader) error {
 
 // Read extracts the RAR file read from input and puts the contents
 // into destination.
-func (rfr *rarFormatReader) ReadEntry() (gocompress.Entry, error) {
+func (rfr *rarFormatReader) Next() (gocompress.Entry, error) {
 	header, err := rfr.rarReader.Next()
 	if err == io.EOF {
-		return nil, nil
+		return nil, io.EOF
 	} else if err != nil {
 		return nil, err
 	}
