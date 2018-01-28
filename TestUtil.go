@@ -30,10 +30,10 @@ func ExtractionTest(t *testing.T, reader Reader, archive string) {
 
 	for {
 		entry, err := reader.Next()
-		require.Nil(err, "Could not read entry from archive\n\t %v", err)
 		if err == io.EOF {
 			break
 		}
+		require.Nil(err, "Could not read entry from archive\n\t %v", err)
 		if entry.IsDirectory() {
 			continue
 		}
