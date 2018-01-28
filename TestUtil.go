@@ -4,38 +4,32 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func ExtractionTest(t *testing.T, reader Reader, archive string) {
-	// if files come before their containing folders, then we must
-	// create their folders before writing the file
+	require := require.New(t)
+
 	tmp, err := MakeTempDir(".")
-	if err != nil {
-		t.Fatalf("Could not create temp dir %v", err)
-		return
-	}
+
+	require.Nil(err, "Could not create temp dir %v", err)
+
 	tmp, err = filepath.Abs(tmp)
 	defer os.RemoveAll(tmp)
 
-	extracted, err := filepath.Abs("files/extracted")
+	extracted, err := filepath.Abs("../../files/extracted")
 
-	if err != nil {
-		t.Fatalf("Could not read abs extracted path\n\t %v", err)
-		return
-	}
+	require.Nil(err, "Could not read abs extracted path\n\t %v", err)
 
-	aPath, err := filepath.Abs("files/archives/" + archive)
+	aPath, err := filepath.Abs("../../files/archives/" + archive)
 	err = reader.OpenPath(aPath)
-	if err != nil {
-		t.Fatalf("Could not open archive\n\t %v", err)
-		return
-	}
+
+	require.Nil(err, "Could not open archive\n\t %v", err)
+
 	for {
 		entry, err := reader.ReadEntry()
-		if err != nil {
-			t.Fatalf("Could not read entry from archive\n\t %v", err)
-			return
-		}
+		require.Nil(err, "Could not read entry from archive\n\t %v", err)
 		if entry == nil {
 			break
 		}
@@ -48,8 +42,5 @@ func ExtractionTest(t *testing.T, reader Reader, archive string) {
 	}
 
 	err = CompareDirectories(extracted, tmp)
-	if err != nil {
-		t.Fatalf("Directory compare failed %s %s\n\t %v", extracted, tmp, err)
-	}
-
+	require.Nil(err, "Directory compare failed %s %s\n\t %v", extracted, tmp, err)
 }

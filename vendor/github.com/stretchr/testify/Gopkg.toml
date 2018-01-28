@@ -22,9 +22,5 @@
 
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/nwaples/rardecode"
-
-[[constraint]]
-  name = "github.com/stretchr/testify"
-  version = "1.2.0"
+  name = "github.com/davecgh/go-spew"
+  version = ">=1.0.0, <=3.0.0-g6d21280"
