@@ -30,7 +30,6 @@ func WriteNewFile(fpath string, fm os.FileMode) error {
 	return nil
 }
 
-
 func CompareDirectories(dir1, dir2 string) error {
 	return filepath.Walk(dir1, func(path string, f os.FileInfo, err error) error {
 		if err != nil {
@@ -40,7 +39,7 @@ func CompareDirectories(dir1, dir2 string) error {
 			return nil
 		}
 		runes := []rune(path)
-		tmpPath := dir2 + string(runes[utf8.RuneCountInString(dir1): utf8.RuneCountInString(path)])
+		tmpPath := dir2 + string(runes[utf8.RuneCountInString(dir1):utf8.RuneCountInString(path)])
 
 		if f.Size() == 0 {
 			tmpFileInfo, err := os.Stat(tmpPath)
@@ -77,7 +76,6 @@ func CompareFiles(path1, path2 string) bool {
 
 	return bytes.Equal(f1, f2)
 }
-
 
 func MakeTempDir(dirPath string) (string, error) {
 	tmp, err := ioutil.TempDir(dirPath, "scratch")
