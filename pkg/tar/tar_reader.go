@@ -91,5 +91,5 @@ func (tfr *tarFormatReader) Next() (gocompress.Entry, error) {
 }
 
 func (tfr *tarFormatReader) ArchiveType() gocompress.ArchiveType {
-	return gocompress.RarArchive
+	return gocompress.TarArchive
 }

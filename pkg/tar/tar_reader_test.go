@@ -6,7 +6,7 @@ import (
 	"github.com/adamhathcock/gocompress"
 )
 
-func TestRarFormatReader_ReadEntry_Rar(t *testing.T) {
+func TestRarFormatReader_ReadEntry_Tar(t *testing.T) {
 	rr := &Reader
-	gocompress.ExtractionTest(t, rr, "tar/Tar.tar")
+	gocompress.ExtractionTest(t, rr, "tar/Tar.tar", gocompress.TarArchive)
 }

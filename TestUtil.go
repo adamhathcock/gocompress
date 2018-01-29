@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func ExtractionTest(t *testing.T, reader Reader, archive string) {
+func ExtractionTest(t *testing.T, reader Reader, archive string, archiveType ArchiveType) {
 	require := require.New(t)
 
 	tmp, err := MakeTempDir(".")
@@ -27,6 +27,8 @@ func ExtractionTest(t *testing.T, reader Reader, archive string) {
 	err = reader.OpenPath(aPath)
 
 	require.Nil(err, "Could not open archive\n\t %v", err)
+
+	require.Equal(archiveType, reader.ArchiveType(), "Archive Types didn't match %v - %v", archiveType, reader.ArchiveType())
 
 	for {
 		entry, err := reader.Next()

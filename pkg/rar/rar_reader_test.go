@@ -8,5 +8,5 @@ import (
 
 func TestRarFormatReader_ReadEntry_Rar(t *testing.T) {
 	rr := &Reader
-	gocompress.ExtractionTest(t, rr, "rar/Rar.rar")
+	gocompress.ExtractionTest(t, rr, "rar/Rar.rar", gocompress.RarArchive)
 }
