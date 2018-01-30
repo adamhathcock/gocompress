@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 	"os"
+
+	"github.com/adamhathcock/gocompress"
 )
 
 type tarFormatEntry struct {
@@ -39,4 +41,9 @@ func (entry *tarFormatEntry) Write(output io.Writer) error {
 	}
 	_, err := io.Copy(output, entry.rarReader)
 	return err
+}
+
+
+func (entry tarFormatEntry) CompressionType() gocompress.CompressionType {
+	return gocompress.None
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func ExtractionTest(t *testing.T, reader Reader, archive string, archiveType ArchiveType) {
+func ExtractionTest(t *testing.T, reader Reader, archive string, archiveType ArchiveType, compressionType CompressionType) {
 	require := require.New(t)
 
 	tmp, err := MakeTempDir(".")
@@ -39,6 +39,8 @@ func ExtractionTest(t *testing.T, reader Reader, archive string, archiveType Arc
 		if entry.IsDirectory() {
 			continue
 		}
+
+		require.Equal(compressionType, entry.CompressionType())
 
 		path := filepath.Join(tmp, entry.Name())
 		WriteNewFile(path, 666)

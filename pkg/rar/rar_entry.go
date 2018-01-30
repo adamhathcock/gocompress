@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/adamhathcock/gocompress"
 	"github.com/nwaples/rardecode"
 )
 
@@ -40,4 +41,11 @@ func (entry *rarFormatEntry) Write(output io.Writer) error {
 	}
 	_, err := io.Copy(output, entry.rarReader)
 	return err
+}
+
+func (entry rarFormatEntry) CompressionType() gocompress.CompressionType {
+	if entry.header != nil && entry.header.PackedSize == entry.header.UnPackedSize {
+		return gocompress.None
+	}
+	return gocompress.Rar
 }

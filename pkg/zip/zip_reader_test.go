@@ -8,5 +8,5 @@ import (
 
 func TestRarFormatReader_ReadEntry_ZipDeflate(t *testing.T) {
 	rr := &Reader
-	gocompress.ExtractionTest(t, rr, "zip/Zip.zip", gocompress.ZipArchive)
+	gocompress.ExtractionTest(t, rr, "zip/Zip.zip", gocompress.ZipArchive, gocompress.Deflate)
 }

@@ -11,4 +11,22 @@ type Entry interface {
 	IsDirectory() bool
 	Mode() os.FileMode
 	Write(output io.Writer) error
+	CompressionType() CompressionType
 }
+
+type CompressionType int
+
+const (
+	None CompressionType = iota
+	GZip
+	BZip2
+	PPMd
+	Deflate
+	Rar
+	LZMA
+	BCJ
+	BCJ2
+	LZip
+	Xz
+	Unknown
+)

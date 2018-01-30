@@ -84,7 +84,6 @@ func (tfr *tarFormatReader) Next() (gocompress.Entry, error) {
 		return nil, err
 	}
 
-	fmt.Println(string([]rune(header.Name)))
 	return &tarFormatEntry{
 		tfr.rarReader,
 		header}, nil
