@@ -43,7 +43,6 @@ func (entry *tarFormatEntry) Write(output io.Writer) error {
 	return err
 }
 
-
 func (entry tarFormatEntry) CompressionType() gocompress.CompressionType {
 	return gocompress.None
 }

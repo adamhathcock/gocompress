@@ -26,21 +26,12 @@ func IsTar(rarPath string) bool {
 	}
 
 	switch header.Typeflag {
-	case tar.TypeReg:
-	case tar.TypeRegA:
-	case tar.TypeLink:
-	case tar.TypeSymlink:
-	case tar.TypeChar:
-	case tar.TypeBlock:
-	case tar.TypeDir:
-	case tar.TypeFifo:
-	case tar.TypeCont:
-	case tar.TypeXHeader:
-	case tar.TypeXGlobalHeader:
-	case tar.TypeGNULongName:
-	case tar.TypeGNULongLink:
-	case tar.TypeGNUSparse:
+	case tar.TypeReg, tar.TypeRegA, tar.TypeLink, tar.TypeSymlink, tar.TypeChar,
+		tar.TypeBlock, tar.TypeDir, tar.TypeFifo, tar.TypeCont, tar.TypeXHeader,
+		tar.TypeXGlobalHeader, tar.TypeGNULongName, tar.TypeGNULongLink, tar.TypeGNUSparse:
 		return true
+	default:
+		return false
 	}
 	return false
 }
