@@ -7,6 +7,6 @@ import (
 )
 
 func TestRarFormatReader_ReadEntry_Tar(t *testing.T) {
-	rr := &Reader
+	rr := &Reader{}
 	gocompress.ExtractionTest(t, rr, "tar/Tar.tar", gocompress.TarArchive, gocompress.None)
 }

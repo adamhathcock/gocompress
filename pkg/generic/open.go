@@ -14,7 +14,7 @@ import (
 // OpenFilePath opens a specific path to a supported archive and returns a Reader
 func OpenFilePath(path string) (gocompress.Reader, error) {
 	if rar.IsRar(path) {
-		rr := rar.Reader
+		rr := rar.Reader{}
 		err := rr.OpenPath(path)
 		if err != nil {
 			return nil, err
@@ -24,7 +24,7 @@ func OpenFilePath(path string) (gocompress.Reader, error) {
 		return s, nil
 	}
 	if zip.IsZip(path) {
-		zr := zip.Reader
+		zr := zip.Reader{}
 		err := zr.OpenPath(path)
 		if err != nil {
 			return nil, err

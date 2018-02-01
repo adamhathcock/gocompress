@@ -2,7 +2,7 @@ package gocompress
 
 import (
 	"io"
-	"os"
+	//"os"
 	"path/filepath"
 	"testing"
 
@@ -17,7 +17,7 @@ func ExtractionTest(t *testing.T, reader Reader, archive string, archiveType Arc
 	require.Nil(err, "Could not create temp dir %v", err)
 
 	tmp, err = filepath.Abs(tmp)
-	defer os.RemoveAll(tmp)
+	//defer os.RemoveAll(tmp)
 
 	extracted, err := filepath.Abs("../../files/extracted")
 
