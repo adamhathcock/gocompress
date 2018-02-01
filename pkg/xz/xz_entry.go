@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/adamhathcock/gocompress"
 	"github.com/ulikunitz/xz"
 )
 
@@ -16,7 +17,6 @@ func (entry xzFormatEntry) Name() string {
 }
 
 func (entry xzFormatEntry) IsDirectory() bool {
-	// just the suffix of '/' should be enough
 	return false
 }
 
@@ -27,4 +27,7 @@ func (entry xzFormatEntry) Mode() os.FileMode {
 func (entry *xzFormatEntry) Write(output io.Writer) error {
 	_, err := io.Copy(output, entry.xzReader)
 	return err
+}
+func (entry *xzFormatEntry) CompressionType() gocompress.CompressionType {
+	return gocompress.Xz
 }

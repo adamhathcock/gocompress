@@ -8,18 +8,15 @@ import (
 	"github.com/ulikunitz/xz"
 )
 
-// Reader is the entry point for using an archive reader on a Rar archive
-var Reader xzFormatReader
-
-type xzFormatReader struct {
+type Reader struct {
 	xzReader *xz.Reader
 }
 
-func (rfr *xzFormatReader) Close() error {
+func (rfr *Reader) Close() error {
 	return nil
 }
 
-func (rfr *xzFormatReader) OpenPath(path string) error {
+func (rfr *Reader) OpenPath(path string) error {
 	rf, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("%s: failed to open file: %v", path, err)
@@ -32,12 +29,10 @@ func (rfr *xzFormatReader) OpenPath(path string) error {
 	return nil
 }
 
-// Read extracts the RAR file read from input and puts the contents
-// into destination.
-func (rfr *xzFormatReader) ReadEntry() (gocompress.Entry, error) {
+func (rfr *Reader) Next() (gocompress.Entry, error) {
 	return &xzFormatEntry{rfr.xzReader}, nil
 }
 
-func (rfr *xzFormatReader) ArchiveType() gocompress.ArchiveType {
+func (rfr *Reader) ArchiveType() gocompress.ArchiveType {
 	return gocompress.ZipArchive
 }
