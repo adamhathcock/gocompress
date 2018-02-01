@@ -7,6 +7,8 @@ import (
 	"io"
 	"os"
 	"strings"
+
+	"github.com/adamhathcock/gocompress"
 )
 
 type zipFormatEntry struct {
@@ -32,7 +34,7 @@ func (entry zipFormatEntry) Mode() os.FileMode {
 	return os.ModeAppend
 }
 
-func (entry *zipFormatEntry) Write(output io.Writer) error {
+func (entry zipFormatEntry) Write(output io.Writer) error {
 	if entry.zipEntry == nil {
 		return errors.New("no Reader")
 	}
@@ -43,3 +45,33 @@ func (entry *zipFormatEntry) Write(output io.Writer) error {
 	_, err = io.Copy(output, rc)
 	return err
 }
+
+func (entry zipFormatEntry) CompressionType() gocompress.CompressionType {
+	switch ZipCompressionMethod(entry.zipEntry.Method) {
+	case None:
+		return gocompress.None
+	case Deflate:
+		return gocompress.Deflate
+	case BZip2:
+		return gocompress.BZip2
+	case LZMA:
+		return gocompress.LZMA
+	case PPMd:
+		return gocompress.PPMd
+	default:
+		return gocompress.Unknown
+	}
+	return gocompress.Rar
+}
+
+type ZipCompressionMethod uint16
+
+const (
+	None      ZipCompressionMethod = 0
+	Deflate                        = 8
+	Deflate64                      = 9
+	BZip2                          = 12
+	LZMA                           = 14
+	PPMd                           = 98
+	WinzipAes                      = 0x63 //http://www.winzip.com/aes_info.htm
+)
