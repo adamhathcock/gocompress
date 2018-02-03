@@ -20,3 +20,8 @@ func TestRarFormatReader_ReadEntry_Targz(t *testing.T) {
 	rr := &Reader{}
 	gocompress.ExtractionTest(t, rr, "tar/Tar.tar.gz", gocompress.TarArchive, gocompress.GZip)
 }
+
+func TestRarFormatReader_ReadEntry_Tarzx(t *testing.T) {
+	rr := &Reader{}
+	gocompress.ExtractionTest(t, rr, "tar/Tar.tar.xz", gocompress.TarArchive, gocompress.Xz)
+}
