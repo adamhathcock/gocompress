@@ -11,6 +11,7 @@ import (
 
 	"github.com/adamhathcock/gocompress"
 	"github.com/dsnet/compress/bzip2"
+	"github.com/ulikunitz/xz"
 )
 
 const tarBlockSize int = 512
@@ -90,6 +91,21 @@ func hasTarHeader(buf []byte) bool {
 	return true
 }
 
+
+func isTarXz(f io.Reader) bool {
+	xz, err := xz.NewReader(f)
+	if err != nil {
+		return false
+	}
+	buf := make([]byte, tarBlockSize)
+	n, err := xz.Read(buf)
+	if err != nil || n < tarBlockSize {
+		return false
+	}
+
+	return hasTarHeader(buf)
+}
+
 func isTarGzip(f io.Reader) bool {
 	gzip, err := gzip.NewReader(f)
 	if err != nil {
@@ -148,7 +164,6 @@ func (tfr *Reader) OpenPath(path string) error {
 
 	f.Close()
 	f, err = os.Open(path)
-
 	if isTarBz2(f) {
 		f.Close()
 		f, err = os.Open(path)
@@ -159,6 +174,21 @@ func (tfr *Reader) OpenPath(path string) error {
 		tfr.compression = gocompress.BZip2
 		return tfr.Open(bz2r)
 	}
+
+
+	f.Close()
+	f, err = os.Open(path)
+	if isTarXz(f) {
+		f.Close()
+		f, err = os.Open(path)
+		bz2r, err := xz.NewReader(f)
+		if err != nil {
+			return fmt.Errorf("%s: failed to open file: %v", path, err)
+		}
+		tfr.compression = gocompress.Xz
+		return tfr.Open(bz2r)
+	}
+
 	f.Close()
 	f, err = os.Open(path)
 	if err != nil {
