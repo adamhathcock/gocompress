@@ -52,6 +52,8 @@ func (entry zipFormatEntry) CompressionType() gocompress.CompressionType {
 		return gocompress.None
 	case Deflate:
 		return gocompress.Deflate
+	case Deflate64:
+		return gocompress.Deflate64
 	case BZip2:
 		return gocompress.BZip2
 	case LZMA:
