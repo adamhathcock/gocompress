@@ -3,6 +3,7 @@ package tar
 import (
 	"archive/tar"
 	"bytes"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"os"
@@ -89,6 +90,21 @@ func hasTarHeader(buf []byte) bool {
 	return true
 }
 
+func isTarGzip(f io.Reader) bool {
+	gzip, err := gzip.NewReader(f)
+	if err != nil {
+		return false
+	}
+	defer gzip.Close()
+	buf := make([]byte, tarBlockSize)
+	n, err := gzip.Read(buf)
+	if err != nil || n < tarBlockSize {
+		return false
+	}
+
+	return hasTarHeader(buf)
+}
+
 func isTarBz2(f io.Reader) bool {
 	bz2r, err := bzip2.NewReader(f, nil)
 	if err != nil {
@@ -118,6 +134,20 @@ func (tfr *Reader) OpenPath(path string) error {
 	if err != nil {
 		return fmt.Errorf("%s: failed to open file: %v", path, err)
 	}
+
+	if isTarGzip(f) {
+		f.Close()
+		f, err = os.Open(path)
+		gzip, err := gzip.NewReader(f)
+		if err != nil {
+			return fmt.Errorf("%s: failed to open file: %v", path, err)
+		}
+		tfr.compression = gocompress.GZip
+		return tfr.Open(gzip)
+	}
+
+	f.Close()
+	f, err = os.Open(path)
 
 	if isTarBz2(f) {
 		f.Close()
