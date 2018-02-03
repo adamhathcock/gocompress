@@ -10,8 +10,9 @@ import (
 )
 
 type tarFormatEntry struct {
-	rarReader *tar.Reader
-	header    *tar.Header
+	tarReader   *tar.Reader
+	header      *tar.Header
+	compression gocompress.CompressionType
 }
 
 func (entry tarFormatEntry) Name() string {
@@ -36,13 +37,13 @@ func (entry tarFormatEntry) Mode() os.FileMode {
 }
 
 func (entry *tarFormatEntry) Write(output io.Writer) error {
-	if entry.rarReader == nil {
+	if entry.tarReader == nil {
 		return errors.New("no Reader")
 	}
-	_, err := io.Copy(output, entry.rarReader)
+	_, err := io.Copy(output, entry.tarReader)
 	return err
 }
 
 func (entry tarFormatEntry) CompressionType() gocompress.CompressionType {
-	return gocompress.None
+	return entry.compression
 }
