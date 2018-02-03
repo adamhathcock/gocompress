@@ -22,6 +22,7 @@ const (
 	BZip2
 	PPMd
 	Deflate
+	Deflate64
 	Rar
 	LZMA
 	BCJ

@@ -8,6 +8,7 @@ import (
 
 	"github.com/adamhathcock/gocompress"
 	"github.com/adamhathcock/gocompress/pkg/rar"
+	"github.com/adamhathcock/gocompress/pkg/tar"
 	"github.com/adamhathcock/gocompress/pkg/zip"
 )
 
@@ -19,9 +20,7 @@ func OpenFilePath(path string) (gocompress.Reader, error) {
 		if err != nil {
 			return nil, err
 		}
-		// why do I have to do this?
-		s := &rr
-		return s, nil
+		return &rr, nil
 	}
 	if zip.IsZip(path) {
 		zr := zip.Reader{}
@@ -30,6 +29,14 @@ func OpenFilePath(path string) (gocompress.Reader, error) {
 			return nil, err
 		}
 		return &zr, nil
+	}
+	if tar.IsTar(path) {
+		tr := tar.Reader{}
+		err := tr.OpenPath(path)
+		if err != nil {
+			return nil, err
+		}
+		return &tr, nil
 	}
 	return nil, errors.New(path + " has no valid format detected")
 }

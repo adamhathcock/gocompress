@@ -9,6 +9,19 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/dsnet/compress"
+  packages = [
+    ".",
+    "bzip2",
+    "bzip2/internal/sais",
+    "internal",
+    "internal/errors",
+    "internal/prefix"
+  ]
+  revision = "cc9eb1d7ad760af14e8f918698f745e80377af4f"
+
+[[projects]]
+  branch = "master"
   name = "github.com/nwaples/rardecode"
   packages = ["."]
   revision = "e06696f847aeda6f39a8f0b7cdff193b7690aef6"
@@ -42,6 +55,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "d08406e94ef04dd24d48aa8a1e2b87bba8156ce71d6fdb3d7cb597ef6bc71351"
+  inputs-digest = "cd0803b0e2d9a7576ed73ca2c18737b34e88b73d3dede939394bb49e11eb96d0"
   solver-name = "gps-cdcl"
   solver-version = 1
