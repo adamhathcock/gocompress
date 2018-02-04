@@ -55,6 +55,7 @@ func isTar(r io.Reader) bool {
 	}
 	return false
 }
+
 // hasTarHeader checks passed bytes has a valid tar header or not. buf must
 // contain at least 512 bytes and if not, it always returns false.
 func hasTarHeader(buf []byte) bool {
@@ -90,7 +91,6 @@ func hasTarHeader(buf []byte) bool {
 
 	return true
 }
-
 
 func isTarXz(f io.Reader) bool {
 	xz, err := xz.NewReader(f)
@@ -137,7 +137,7 @@ func isTarBz2(f io.Reader) bool {
 }
 
 type Reader struct {
-	rarReader *tar.Reader
+	rarReader   *tar.Reader
 	compression gocompress.CompressionType
 }
 
@@ -174,7 +174,6 @@ func (tfr *Reader) OpenPath(path string) error {
 		tfr.compression = gocompress.BZip2
 		return tfr.Open(bz2r)
 	}
-
 
 	f.Close()
 	f, err = os.Open(path)
