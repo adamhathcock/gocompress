@@ -9,33 +9,33 @@ import (
 	"github.com/nwaples/rardecode"
 )
 
-type rarFormatEntry struct {
+type rarEntry struct {
 	rarReader *rardecode.Reader
 	header    *rardecode.FileHeader
 }
 
-func (entry rarFormatEntry) Name() string {
+func (entry rarEntry) Name() string {
 	if entry.header != nil {
 		return entry.header.Name
 	}
 	return ""
 }
 
-func (entry rarFormatEntry) IsDirectory() bool {
+func (entry rarEntry) IsDirectory() bool {
 	if entry.header != nil {
 		return entry.header.IsDir
 	}
 	return false
 }
 
-func (entry rarFormatEntry) Mode() os.FileMode {
+func (entry rarEntry) Mode() os.FileMode {
 	if entry.header != nil {
 		return entry.header.Mode()
 	}
 	return os.ModeAppend
 }
 
-func (entry *rarFormatEntry) Write(output io.Writer) error {
+func (entry *rarEntry) Write(output io.Writer) error {
 	if entry.rarReader == nil {
 		return errors.New("no Reader")
 	}
@@ -43,7 +43,7 @@ func (entry *rarFormatEntry) Write(output io.Writer) error {
 	return err
 }
 
-func (entry rarFormatEntry) CompressionType() common.CompressionType {
+func (entry rarEntry) CompressionType() common.CompressionType {
 	if entry.header != nil && entry.header.PackedSize == entry.header.UnPackedSize {
 		return common.None
 	}

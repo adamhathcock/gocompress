@@ -8,5 +8,5 @@ import (
 )
 
 func TestRarFormatReader_ReadEntry_Rar(t *testing.T) {
-	internal.ExtractionTest(t, "../files/archives/rar/Rar.rar", OpenReader, common.RarArchive, common.Rar)
+	internal.ReadCloserExtractionTest(t, "../files/archives/rar/Rar.rar", OpenReader, common.RarArchive, common.Rar)
 }

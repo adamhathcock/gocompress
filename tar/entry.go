@@ -9,34 +9,34 @@ import (
 	"github.com/adamhathcock/gocompress/common"
 )
 
-type tarFormatEntry struct {
+type tarEntry struct {
 	tarReader   *tar.Reader
 	header      *tar.Header
 	compression common.CompressionType
 }
 
-func (entry tarFormatEntry) Name() string {
+func (entry tarEntry) Name() string {
 	if entry.header != nil {
 		return entry.header.Name
 	}
 	return ""
 }
 
-func (entry tarFormatEntry) IsDirectory() bool {
+func (entry tarEntry) IsDirectory() bool {
 	if entry.header != nil {
 		return entry.header.Typeflag == tar.TypeDir
 	}
 	return false
 }
 
-func (entry tarFormatEntry) Mode() os.FileMode {
+func (entry tarEntry) Mode() os.FileMode {
 	if entry.header != nil {
 		return entry.header.FileInfo().Mode()
 	}
 	return os.ModeAppend
 }
 
-func (entry *tarFormatEntry) Write(output io.Writer) error {
+func (entry *tarEntry) Write(output io.Writer) error {
 	if entry.tarReader == nil {
 		return errors.New("no Reader")
 	}
@@ -44,6 +44,6 @@ func (entry *tarFormatEntry) Write(output io.Writer) error {
 	return err
 }
 
-func (entry tarFormatEntry) CompressionType() common.CompressionType {
+func (entry tarEntry) CompressionType() common.CompressionType {
 	return entry.compression
 }

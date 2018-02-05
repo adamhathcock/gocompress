@@ -11,16 +11,36 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-type ReaderOpener func(archive string) (common.Reader, error)
+type ReadCloserOpener func(archive string) (common.ReadCloser, error)
+type ReaderOpener func(reader io.Reader) (common.Reader, error)
 
-func ExtractionTest(t *testing.T, archive string, opener ReaderOpener, archiveType common.ArchiveType, compressionType common.CompressionType) {
+func ReaderExtractionTest(t *testing.T, archive string, opener ReaderOpener, archiveType common.ArchiveType, compressionType common.CompressionType) {
+	require := require.New(t)
+
+	aPath, err := filepath.Abs(archive)
+	require.Nil(err, "Could not open file\n\t %v", err)
+
+	reader, err := os.Open(aPath)
+	defer reader.Close()
+
+	archiveReader, err := opener(reader)
+	require.Nil(err, "Could not open file\n\t %v", err)
+
+	read(require, archive, archiveReader, archiveType, compressionType)
+}
+
+func ReadCloserExtractionTest(t *testing.T, archive string, opener ReadCloserOpener, archiveType common.ArchiveType, compressionType common.CompressionType) {
 	require := require.New(t)
 
 	aPath, err := filepath.Abs(archive)
 	reader, err := opener(aPath)
-
 	require.Nil(err, "Could not open archive\n\t %v", err)
+	defer reader.Close()
 
+	read(require, archive, reader, archiveType, compressionType)
+}
+
+func read(require *require.Assertions, archive string, reader common.Reader, archiveType common.ArchiveType, compressionType common.CompressionType) {
 	split := strings.Split(archive, "archives")
 	extractedPath := split[0] + "extracted"
 

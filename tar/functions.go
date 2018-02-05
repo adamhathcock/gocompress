@@ -4,12 +4,10 @@ import (
 	"archive/tar"
 	"bytes"
 	"compress/gzip"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
 
-	"github.com/adamhathcock/gocompress/common"
 	"github.com/dsnet/compress/bzip2"
 	"github.com/ulikunitz/xz"
 )
@@ -134,92 +132,4 @@ func isTarBz2(f io.Reader) bool {
 	}
 
 	return hasTarHeader(buf)
-}
-
-type Reader struct {
-	rarReader   *tar.Reader
-	compression common.CompressionType
-}
-
-func (tfr *Reader) Close() error {
-	return nil
-}
-
-func OpenReader(path string) (common.Reader, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
-	}
-
-	if isTarGzip(f) {
-		f.Close()
-		f, err = os.Open(path)
-		gzip, err := gzip.NewReader(f)
-		if err != nil {
-			return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
-		}
-		return open(gzip, common.GZip)
-	}
-
-	f.Close()
-	f, err = os.Open(path)
-	if isTarBz2(f) {
-		f.Close()
-		f, err = os.Open(path)
-		bz2r, err := bzip2.NewReader(f, nil)
-		if err != nil {
-			return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
-		}
-		return open(bz2r, common.BZip2)
-	}
-
-	f.Close()
-	f, err = os.Open(path)
-	if isTarXz(f) {
-		f.Close()
-		f, err = os.Open(path)
-		bz2r, err := xz.NewReader(f)
-		if err != nil {
-			return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
-		}
-		return open(bz2r, common.Xz)
-	}
-
-	f.Close()
-	f, err = os.Open(path)
-	if err != nil {
-		return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
-	}
-	return open(f, common.None)
-}
-
-func open(input io.Reader, compressionType common.CompressionType) (common.Reader, error) {
-	var err error
-	tfr := &Reader{}
-	tfr.rarReader = tar.NewReader(input)
-	if tfr.rarReader == nil {
-		return nil, fmt.Errorf("read: failed to create reader: %v", err)
-	}
-	tfr.compression = compressionType
-	return tfr, nil
-}
-
-// Read extracts the RAR file read from input and puts the contents
-// into destination.
-func (tfr *Reader) Next() (common.Entry, error) {
-	header, err := tfr.rarReader.Next()
-	if err == io.EOF {
-		return nil, io.EOF
-	} else if err != nil {
-		return nil, err
-	}
-
-	return &tarFormatEntry{
-		tfr.rarReader,
-		header,
-		tfr.compression}, nil
-}
-
-func (tfr *Reader) ArchiveType() common.ArchiveType {
-	return common.TarArchive
 }
