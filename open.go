@@ -1,4 +1,4 @@
-package generic
+package gocompress
 
 import (
 	"errors"
@@ -6,48 +6,46 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/adamhathcock/gocompress"
-	"github.com/adamhathcock/gocompress/pkg/rar"
-	"github.com/adamhathcock/gocompress/pkg/tar"
-	"github.com/adamhathcock/gocompress/pkg/zip"
+	"github.com/adamhathcock/gocompress/common"
+	"github.com/adamhathcock/gocompress/internal"
+	"github.com/adamhathcock/gocompress/rar"
+	"github.com/adamhathcock/gocompress/tar"
+	"github.com/adamhathcock/gocompress/zip"
 )
 
 // OpenFilePath opens a specific path to a supported archive and returns a Reader
-func OpenFilePath(path string) (gocompress.Reader, error) {
+func OpenReader(path string) (common.Reader, error) {
 	if rar.IsRar(path) {
-		rr := rar.Reader{}
-		err := rr.OpenPath(path)
+		reader, err := rar.OpenReader(path)
 		if err != nil {
 			return nil, err
 		}
-		return &rr, nil
+		return reader, nil
 	}
 	if zip.IsZip(path) {
-		zr := zip.Reader{}
-		err := zr.OpenPath(path)
+		reader, err := zip.OpenReader(path)
 		if err != nil {
 			return nil, err
 		}
-		return &zr, nil
+		return reader, nil
 	}
 	if tar.IsTar(path) {
-		tr := tar.Reader{}
-		err := tr.OpenPath(path)
+		reader, err := tar.OpenReader(path)
 		if err != nil {
 			return nil, err
 		}
-		return &tr, nil
+		return reader, nil
 	}
 	return nil, errors.New(path + " has no valid format detected")
 }
 
 // Extract will extract all files from the source archive path to a destination folder
 func Extract(source string, destination string) error {
-	reader, err := OpenFilePath(source)
+	reader, err := OpenReader(source)
 	if err != nil {
 		return err
 	}
-	var entry gocompress.Entry
+	var entry common.Entry
 	for {
 		entry, err = reader.Next()
 		if err == io.EOF {
@@ -57,7 +55,7 @@ func Extract(source string, destination string) error {
 			return err
 		}
 		path := filepath.Join(destination, entry.Name())
-		gocompress.WriteNewFile(path, 666)
+		internal.WriteNewFile(path, 666)
 		writer, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if err != nil {
 			return err

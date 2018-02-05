@@ -6,13 +6,13 @@ import (
 	"io"
 	"os"
 
-	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/common"
 )
 
 type tarFormatEntry struct {
 	tarReader   *tar.Reader
 	header      *tar.Header
-	compression gocompress.CompressionType
+	compression common.CompressionType
 }
 
 func (entry tarFormatEntry) Name() string {
@@ -44,6 +44,6 @@ func (entry *tarFormatEntry) Write(output io.Writer) error {
 	return err
 }
 
-func (entry tarFormatEntry) CompressionType() gocompress.CompressionType {
+func (entry tarFormatEntry) CompressionType() common.CompressionType {
 	return entry.compression
 }

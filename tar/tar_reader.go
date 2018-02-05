@@ -9,7 +9,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/common"
 	"github.com/dsnet/compress/bzip2"
 	"github.com/ulikunitz/xz"
 )
@@ -138,17 +138,17 @@ func isTarBz2(f io.Reader) bool {
 
 type Reader struct {
 	rarReader   *tar.Reader
-	compression gocompress.CompressionType
+	compression common.CompressionType
 }
 
 func (tfr *Reader) Close() error {
 	return nil
 }
 
-func (tfr *Reader) OpenPath(path string) error {
+func OpenReader(path string) (common.Reader, error) {
 	f, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("%s: failed to open file: %v", path, err)
+		return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
 	}
 
 	if isTarGzip(f) {
@@ -156,10 +156,9 @@ func (tfr *Reader) OpenPath(path string) error {
 		f, err = os.Open(path)
 		gzip, err := gzip.NewReader(f)
 		if err != nil {
-			return fmt.Errorf("%s: failed to open file: %v", path, err)
+			return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
 		}
-		tfr.compression = gocompress.GZip
-		return tfr.Open(gzip)
+		return open(gzip, common.GZip)
 	}
 
 	f.Close()
@@ -169,10 +168,9 @@ func (tfr *Reader) OpenPath(path string) error {
 		f, err = os.Open(path)
 		bz2r, err := bzip2.NewReader(f, nil)
 		if err != nil {
-			return fmt.Errorf("%s: failed to open file: %v", path, err)
+			return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
 		}
-		tfr.compression = gocompress.BZip2
-		return tfr.Open(bz2r)
+		return open(bz2r, common.BZip2)
 	}
 
 	f.Close()
@@ -182,33 +180,33 @@ func (tfr *Reader) OpenPath(path string) error {
 		f, err = os.Open(path)
 		bz2r, err := xz.NewReader(f)
 		if err != nil {
-			return fmt.Errorf("%s: failed to open file: %v", path, err)
+			return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
 		}
-		tfr.compression = gocompress.Xz
-		return tfr.Open(bz2r)
+		return open(bz2r, common.Xz)
 	}
 
 	f.Close()
 	f, err = os.Open(path)
 	if err != nil {
-		return fmt.Errorf("%s: failed to open file: %v", path, err)
+		return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
 	}
-	tfr.compression = gocompress.None
-	return tfr.Open(f)
+	return open(f, common.None)
 }
 
-func (tfr *Reader) Open(input io.Reader) error {
+func open(input io.Reader, compressionType common.CompressionType) (common.Reader, error) {
 	var err error
+	tfr := &Reader{}
 	tfr.rarReader = tar.NewReader(input)
 	if tfr.rarReader == nil {
-		return fmt.Errorf("read: failed to create reader: %v", err)
+		return nil, fmt.Errorf("read: failed to create reader: %v", err)
 	}
-	return nil
+	tfr.compression = compressionType
+	return tfr, nil
 }
 
 // Read extracts the RAR file read from input and puts the contents
 // into destination.
-func (tfr *Reader) Next() (gocompress.Entry, error) {
+func (tfr *Reader) Next() (common.Entry, error) {
 	header, err := tfr.rarReader.Next()
 	if err == io.EOF {
 		return nil, io.EOF
@@ -222,6 +220,6 @@ func (tfr *Reader) Next() (gocompress.Entry, error) {
 		tfr.compression}, nil
 }
 
-func (tfr *Reader) ArchiveType() gocompress.ArchiveType {
-	return gocompress.TarArchive
+func (tfr *Reader) ArchiveType() common.ArchiveType {
+	return common.TarArchive
 }

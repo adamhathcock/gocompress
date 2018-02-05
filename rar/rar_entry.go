@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/common"
 	"github.com/nwaples/rardecode"
 )
 
@@ -43,9 +43,9 @@ func (entry *rarFormatEntry) Write(output io.Writer) error {
 	return err
 }
 
-func (entry rarFormatEntry) CompressionType() gocompress.CompressionType {
+func (entry rarFormatEntry) CompressionType() common.CompressionType {
 	if entry.header != nil && entry.header.PackedSize == entry.header.UnPackedSize {
-		return gocompress.None
+		return common.None
 	}
-	return gocompress.Rar
+	return common.Rar
 }

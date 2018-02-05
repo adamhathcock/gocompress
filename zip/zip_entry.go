@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/common"
 )
 
 type zipFormatEntry struct {
@@ -46,24 +46,24 @@ func (entry zipFormatEntry) Write(output io.Writer) error {
 	return err
 }
 
-func (entry zipFormatEntry) CompressionType() gocompress.CompressionType {
+func (entry zipFormatEntry) CompressionType() common.CompressionType {
 	switch ZipCompressionMethod(entry.zipEntry.Method) {
 	case None:
-		return gocompress.None
+		return common.None
 	case Deflate:
-		return gocompress.Deflate
+		return common.Deflate
 	case Deflate64:
-		return gocompress.Deflate64
+		return common.Deflate64
 	case BZip2:
-		return gocompress.BZip2
+		return common.BZip2
 	case LZMA:
-		return gocompress.LZMA
+		return common.LZMA
 	case PPMd:
-		return gocompress.PPMd
+		return common.PPMd
 	default:
-		return gocompress.Unknown
+		return common.Unknown
 	}
-	return gocompress.Rar
+	return common.Rar
 }
 
 type ZipCompressionMethod uint16

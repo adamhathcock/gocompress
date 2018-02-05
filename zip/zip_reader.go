@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/common"
 )
 
 func init() {
@@ -40,18 +40,19 @@ func (zfr *Reader) Close() error {
 	return zfr.zipReader.Close()
 }
 
-func (zfr *Reader) OpenPath(path string) error {
+func OpenReader(path string) (common.Reader, error) {
 	var err error
+	zfr := &Reader{}
 	zfr.zipReader, err = zip.OpenReader(path)
 	if err != nil {
-		return fmt.Errorf("read: failed to create reader: %v", err)
+		return nil, fmt.Errorf("read: failed to create reader: %v", err)
 	}
-	return nil
+	return zfr, nil
 }
 
 // Read extracts the RAR file read from input and puts the contents
 // into destination.
-func (zfr *Reader) Next() (gocompress.Entry, error) {
+func (zfr *Reader) Next() (common.Entry, error) {
 	if zfr.index >= len(zfr.zipReader.File) {
 		return nil, io.EOF
 	}
@@ -62,6 +63,6 @@ func (zfr *Reader) Next() (gocompress.Entry, error) {
 	return &zipFormatEntry{f}, nil
 }
 
-func (zfr *Reader) ArchiveType() gocompress.ArchiveType {
-	return gocompress.ZipArchive
+func (zfr *Reader) ArchiveType() common.ArchiveType {
+	return common.ZipArchive
 }

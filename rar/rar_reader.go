@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/adamhathcock/gocompress"
+	"github.com/adamhathcock/gocompress/common"
 	"github.com/nwaples/rardecode"
 )
 
@@ -36,27 +36,28 @@ func (rfr *Reader) Close() error {
 	return nil
 }
 
-func (rfr *Reader) OpenPath(path string) error {
+func OpenReader(path string) (common.Reader, error) {
 	rf, err := os.Open(path)
 	if err != nil {
-		return fmt.Errorf("%s: failed to open file: %v", path, err)
+		return nil, fmt.Errorf("%s: failed to open file: %v", path, err)
 	}
 
-	return rfr.Open(rf)
+	return Open(rf)
 }
 
-func (rfr *Reader) Open(input io.Reader) error {
+func Open(input io.Reader) (common.Reader, error) {
 	var err error
+	rfr := &Reader{}
 	rfr.rarReader, err = rardecode.NewReader(input, "")
 	if err != nil {
-		return fmt.Errorf("read: failed to create reader: %v", err)
+		return nil, fmt.Errorf("read: failed to create reader: %v", err)
 	}
-	return nil
+	return rfr, nil
 }
 
 // Read extracts the RAR file read from input and puts the contents
 // into destination.
-func (rfr *Reader) Next() (gocompress.Entry, error) {
+func (rfr *Reader) Next() (common.Entry, error) {
 	header, err := rfr.rarReader.Next()
 	if err == io.EOF {
 		return nil, io.EOF
@@ -69,6 +70,6 @@ func (rfr *Reader) Next() (gocompress.Entry, error) {
 		header}, nil
 }
 
-func (rfr *Reader) ArchiveType() gocompress.ArchiveType {
-	return gocompress.RarArchive
+func (rfr *Reader) ArchiveType() common.ArchiveType {
+	return common.RarArchive
 }

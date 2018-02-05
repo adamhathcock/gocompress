@@ -1,4 +1,4 @@
-package gocompress
+package common
 
 import (
 	"io"

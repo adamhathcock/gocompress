@@ -1,4 +1,4 @@
-package gocompress
+package internal
 
 import (
 	"bytes"

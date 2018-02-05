@@ -1,29 +1,28 @@
-package gocompress
+package internal
 
 import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/adamhathcock/gocompress/common"
 	"github.com/stretchr/testify/require"
 )
 
-func GenericExtractionTest(require *require.Assertions, reader Reader, archiveType ArchiveType, compressionType CompressionType) {
-	extract(require, reader, archiveType, compressionType)
-}
+type ReaderOpener func(archive string) (common.Reader, error)
 
-func ExtractionTest(t *testing.T, reader Reader, archive string, archiveType ArchiveType, compressionType CompressionType) {
+func ExtractionTest(t *testing.T, archive string, opener ReaderOpener, archiveType common.ArchiveType, compressionType common.CompressionType) {
 	require := require.New(t)
 
-	aPath, err := filepath.Abs("../../files/archives/" + archive)
-	err = reader.OpenPath(aPath)
+	aPath, err := filepath.Abs(archive)
+	reader, err := opener(aPath)
 
 	require.Nil(err, "Could not open archive\n\t %v", err)
-	extract(require, reader, archiveType, compressionType)
-}
 
-func extract(require *require.Assertions, reader Reader, archiveType ArchiveType, compressionType CompressionType) {
+	split := strings.Split(archive, "archives")
+	extractedPath := split[0] + "extracted"
 
 	tmp, err := MakeTempDir(".")
 
@@ -34,7 +33,7 @@ func extract(require *require.Assertions, reader Reader, archiveType ArchiveType
 
 	require.Nil(err, "Could not read abs extracted path\n\t %v", err)
 
-	extracted, err := filepath.Abs("../../files/extracted")
+	extracted, err := filepath.Abs(extractedPath)
 
 	require.Equal(archiveType, reader.ArchiveType(), "Archive Types didn't match %v - %v", archiveType, reader.ArchiveType())
 
